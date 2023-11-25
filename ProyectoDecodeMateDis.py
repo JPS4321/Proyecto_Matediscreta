@@ -9,11 +9,23 @@
 # -----------------------------------------------------------
 import math
 
+#Alfabeto
+alfabeto_dict = {}
+letra = 'a'
+valor = 0
+
+#Crear el alfabeto
+for i in range(26):
+    alfabeto_dict[letra] = valor
+    letra = chr(ord(letra) + 1)  # Incrementa la letra
+    valor += 1
+
 #Funcion que maneja logica de decriptacion
 def Decriptador(cipher_blocks, n, d):
     decrypted_blocks = [pow(c, d, n) for c in cipher_blocks]
     decrypted_message = ''.join(chr((block // 100) + ord('A')) + chr((block % 100) + ord('A')) for block in decrypted_blocks)
     return decrypted_message
+
 #Funcion para obtener el inverso modlar
 def inverso_modular(a, m):
     g, x, y = algoritmo_Euclides(a, m)
@@ -21,6 +33,7 @@ def inverso_modular(a, m):
         raise Exception('Inverso modular no existe para %d mod %d' % (a, m))
     else:
         return x % m
+    
 #Funcionl la cual realiza el algoritmo de euclide
 def algoritmo_Euclides(a, b):
     if a == 0:
@@ -28,10 +41,12 @@ def algoritmo_Euclides(a, b):
     else:
         gcd, x, y = algoritmo_Euclides(b % a, a)
         return gcd, y - (b // a) * x, x
+    
 #Funcion para obtener el valor de phi
 def encontrar_phi(n):
     p, q = encontrar_factores(n)
     return (p - 1) * (q - 1)
+
 #Funcion para obtener los factores de n
 def encontrar_factores(n):
     for i in range(2, int(n**0.5) + 1):
@@ -39,8 +54,7 @@ def encontrar_factores(n):
             return i, n // i
     raise Exception('Factores no encontrados para n=%d. Asegúrese de que n sea el producto de dos números primos.' % n)
 
-
-#Primo
+#Funcion para verificar si es Primo
 def es_primo(numero):
     if numero <= 1:
         return False
@@ -55,23 +69,95 @@ def es_primo(numero):
 
     return True
 
+# Funcion para cambiar letras a numeros
+def letra_a_numero(letra):
+    return alfabeto_dict[letra]
+
 #Encriptador
 def encripter():
     doubleprime = False
-    print(" \n ENCRIPTADOR \n")
+    maxcomdiv = False
+    p = 0
+    q = 0
+    print(" \n***ENCRIPTADOR*** \n")
+    #Mensaje
     mensaje = input("Ingrese el mensaje a encriptar:")
-    print("Ahora debe de ingresar 2 números primos")
+    mensaje = mensaje.replace(" ", "").lower()
+    sizemen = (len(mensaje))%2
+    if (sizemen == 1):
+        mensaje = ''.join([mensaje, "h"])
+    
+    lista_mensaje = [caracter for caracter in mensaje]
+    lista_numeros = []
+    
+    for caracter in lista_mensaje:
+        if caracter in alfabeto_dict:
+            lista_numeros.append(str(letra_a_numero(caracter)))
+            
+    lista_bloques = []
+         
+    for i in range(0, len(lista_numeros), 2):
+        bloque = ""
+        if (len(lista_numeros[i+1]) < 2):
+            lista_numeros[i+1] = "0" + lista_numeros[i+1]
+        bloque = lista_numeros[i] + lista_numeros[i+1]
+        lista_bloques.append(bloque)
+        
+    lista_bloques_num = []
+    
+    for bloque in lista_bloques:
+        lista_bloques_num.append(int(bloque))
+        
+    # p & q 
+    print("\nIngrese 2 números primos para la llave pública")
     while doubleprime == False:
         p = int(input("Ingrese el primer número primo:"))
-        q = int(input("Ingrese el primer número primo:"))
+        q = int(input("Ingrese el segundo número primo:"))
         if (es_primo(p) == True & es_primo(q) == True):
-            print("Son Primos")
+            print("\n*NÚMEROS APROBADOS*\n")
             doubleprime = True
         else:
-            print("Ambos no son primos")
-        
-    e = input("")
+            if (es_primo(p) == True and es_primo(q) == False):
+                print( "\n-" + str(q) + " no es primo. Vuelva a Intentarlo-\n")
+            elif (es_primo(q) == True and es_primo(p) == False):
+                print("\n-" + str(p) + " no es primo. Vuelva a Intentarlo-\n")
+            else:
+                print("\n-Ambos no son primos. Vuelva a Intentarlo-\n")
+    # n & phi
+    n = p*q   
+    phi = (p-1)*(q-1) 
+    # e 
+    print("\nIngrese un número positivo que tenga como MCD '1' con este número: " + str(phi))
+    while maxcomdiv == False:
+        e = int(input(""))
+        mcd = math.gcd(phi,int(e))
+        if(mcd != 1):
+            print("El número ingresado no tiene 1 como MCD con " + str(phi) +". Vuelva a Intentarlo\n")
+        else:
+            print("\n*NÚMERO APROBADO*\n")
+            maxcomdiv = True
+            
+    lista_mensaje_prefinal = []
+    #Encriptacion
+    for bloque in lista_bloques_num:
+        bloque = bloque**e
+        bloque = bloque % n
+        lista_mensaje_prefinal.append(int(bloque))
 
+    lista_mensaje_final = []
+    
+    for bloque in lista_mensaje_prefinal:
+        valor = str(bloque)
+        if (len(valor) < 4):
+            valor = "0" + valor
+        lista_mensaje_final.append(valor)
+    
+    print("Mensaje Encriptrado")
+    for bloque in lista_mensaje_final:
+        print(bloque + " ", end='')
+    
+    print("\n")
+    
 #Desencriptador
 def deencripter():
     try:

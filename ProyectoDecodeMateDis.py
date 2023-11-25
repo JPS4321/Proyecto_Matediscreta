@@ -161,14 +161,14 @@ def encripter():
 #Desencriptador
 def deencripter():
     try:
-        cipher_input = input("Ingrese el mensaje cifrado (números separados por espacios): ")
-        cipher_blocks = [int(block) for block in cipher_input.split()]
+        input_cifrado = input("Ingrese el mensaje cifrado (números separados por espacios): ")
+        Bloques_cifrado = [int(block) for block in input_cifrado.split()]
         n = int(input("Ingrese n: "))
         e = int(input("Ingrese e: "))
         phi = encontrar_phi(n)
         d = inverso_modular(e, phi)
-        decrypted_message = Decriptador(cipher_blocks, n, d)
-        print(f"Mensaje Desencriptado: {decrypted_message}")
+        Mensaje = Decriptador(Bloques_cifrado, n, d)
+        print(f"Mensaje Desencriptado: {Mensaje}")
         print(f"Clave Privada d: {d}")
     except ValueError:
         print("Error: Entrada no válida. Asegúrese de ingresar números enteros.")

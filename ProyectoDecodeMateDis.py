@@ -4,8 +4,8 @@
 # Diego Duarte 22075
 # Juan Pablo Solis 22102
 # Fecha de creación: 6/11/2023
-# Última modificación: 
-# Versión: 1
+# Última modificación: 24/11/2023
+# Versión: 4
 # -----------------------------------------------------------
 import math
 
